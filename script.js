@@ -10,8 +10,13 @@ for (let hora = 9; hora <= 21; hora++) {
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarServicos();
-    carregarAgendamentos();
     carregarCaixa();
+    
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('data').value = hoje;
+    document.getElementById('data-caixa').value = hoje;
+    carregarAgendamentosPorData();
+    atualizarTotalDiaPorData();
 });
 
 
@@ -90,38 +95,39 @@ function atualizarSelectServicos() {
 
 
 function adicionarAgendamento() {
+    const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
     const cliente = document.getElementById('cliente').value.trim();
     const servico = document.getElementById('servico-agendamento').value;
     const valor = parseFloat(document.getElementById('valor').value);
-    if (!hora || !cliente || !servico || isNaN(valor) || valor <= 0) {
+    if (!data || !hora || !cliente || !servico || isNaN(valor) || valor <= 0) {
         alert('Preencha todos os campos, incluindo um valor válido!');
         return;
     }
     let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || {};
-    if (!agendamentos[hora]) agendamentos[hora] = [];
+    if (!agendamentos[data]) agendamentos[data] = {};
+    if (!agendamentos[data][hora]) agendamentos[data][hora] = [];
     
- 
-    let clienteIndex = agendamentos[hora].findIndex(c => c.cliente === cliente);
+    
+    let clienteIndex = agendamentos[data][hora].findIndex(c => c.cliente === cliente);
     if (clienteIndex === -1) {
-
-        if (agendamentos[hora].length >= 2) {
+       
+        if (agendamentos[data][hora].length >= 2) {
             alert('Horário já tem 2 clientes!');
             return;
         }
-        agendamentos[hora].push({ cliente, servicos: [{ servico, valor }] });
+        agendamentos[data][hora].push({ cliente, servicos: [{ servico, valor }] });
     } else {
-      
-        if (agendamentos[hora][clienteIndex].servicos.length >= 3) {
+        
+        if (agendamentos[data][hora][clienteIndex].servicos.length >= 3) {
             alert('Cliente já tem 3 serviços neste horário!');
             return;
         }
-        agendamentos[hora][clienteIndex].servicos.push({ servico, valor });
+        agendamentos[data][hora][clienteIndex].servicos.push({ servico, valor });
     }
     
     localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-    renderizarAgendamentos();
-    atualizarSelectHorarios();
+    carregarAgendamentosPorData();
     // Limpar campos
     document.getElementById('hora').value = '';
     document.getElementById('cliente').value = '';
@@ -129,18 +135,19 @@ function adicionarAgendamento() {
     document.getElementById('valor').value = '';
 }
 
-function renderizarAgendamentos() {
+function renderizarAgendamentos(data) {
     const tbody = document.querySelector('#tabela-agendamentos tbody');
     tbody.innerHTML = '';
     const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || {};
+    const agsDia = agendamentos[data] || {};
     horariosFixos.forEach(hora => {
         const row = document.createElement('tr');
-        const ags = agendamentos[hora] || [];
+        const ags = agsDia[hora] || [];
         const cliente1 = ags[0] ? `${ags[0].cliente}: ${ags[0].servicos.map(s => `${s.servico} (R$${s.valor.toFixed(2)})`).join(', ')}` : 'Livre';
         const total1 = ags[0] ? `R$ ${ags[0].servicos.reduce((sum, s) => sum + s.valor, 0).toFixed(2)}` : '-';
         const cliente2 = ags[1] ? `${ags[1].cliente}: ${ags[1].servicos.map(s => `${s.servico} (R$${s.valor.toFixed(2)})`).join(', ')}` : 'Livre';
         const total2 = ags[1] ? `R$ ${ags[1].servicos.reduce((sum, s) => sum + s.valor, 0).toFixed(2)}` : '-';
-        const acoes = ags.length > 0 ? `<button onclick="removerAgendamento('${hora}')">Remover Todos</button>` : '-';
+        const acoes = ags.length > 0 ? `<button onclick="removerAgendamento('${data}', '${hora}')">Remover Todos</button>` : '-';
         row.innerHTML = `
             <td>${hora}</td>
             <td>${cliente1}</td>
@@ -153,27 +160,30 @@ function renderizarAgendamentos() {
     });
 }
 
-function removerAgendamento(hora) {
-    if (confirm('Remover todos os agendamentos deste horário?')) {
+function removerAgendamento(data, hora) {
+    if (confirm('Remover todos os agendamentos deste horário nesta data?')) {
         let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || {};
-        delete agendamentos[hora];
-        localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-        renderizarAgendamentos();
-        atualizarSelectHorarios();
+        if (agendamentos[data] && agendamentos[data][hora]) {
+            delete agendamentos[data][hora];
+            localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+            carregarAgendamentosPorData();
+        }
     }
 }
 
-function carregarAgendamentos() {
-    renderizarAgendamentos();
-    atualizarSelectHorarios();
+function carregarAgendamentosPorData() {
+    const data = document.getElementById('data').value;
+    renderizarAgendamentos(data);
+    atualizarSelectHorarios(data);
 }
 
-function atualizarSelectHorarios() {
+function atualizarSelectHorarios(data) {
     const select = document.getElementById('hora');
     select.innerHTML = '<option value="">Selecione Horário</option>';
     const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || {};
+    const agsDia = agendamentos[data] || {};
     horariosFixos.forEach(hora => {
-        const ags = agendamentos[hora] || [];
+        const ags = agsDia[hora] || [];
         if (ags.length < 2) {
             const option = document.createElement('option');
             option.value = hora;
@@ -183,41 +193,51 @@ function atualizarSelectHorarios() {
     });
 }
 
+
 function adicionarGanho() {
+    const data = document.getElementById('data-caixa').value;
     const ganho = parseFloat(document.getElementById('ganho').value);
-    if (isNaN(ganho) || ganho <= 0) {
-        alert('Insira um valor válido!');
+    if (!data || isNaN(ganho) || ganho <= 0) {
+        alert('Selecione uma data e insira um valor válido!');
         return;
     }
-    const hoje = new Date().toISOString().split('T')[0];
     let caixa = JSON.parse(localStorage.getItem('caixa')) || {};
-    if (!caixa[hoje]) caixa[hoje] = 0;
-    caixa[hoje] += ganho;
+    if (!caixa[data]) caixa[data] = 0;
+    caixa[data] += ganho;
     localStorage.setItem('caixa', JSON.stringify(caixa));
-    atualizarTotalDia(caixa[hoje]);
+    atualizarTotalDiaPorData();
     renderizarHistorico(caixa);
     document.getElementById('ganho').value = '';
 }
 
 function carregarCaixa() {
     const caixa = JSON.parse(localStorage.getItem('caixa')) || {};
-    const hoje = new Date().toISOString().split('T')[0];
-    atualizarTotalDia(caixa[hoje] || 0);
     renderizarHistorico(caixa);
+    atualizarTotalDiaPorData();
 }
 
-function atualizarTotalDia(total) {
+function atualizarTotalDiaPorData() {
+    const data = document.getElementById('data-caixa').value;
+    const caixa = JSON.parse(localStorage.getItem('caixa')) || {};
+    const total = caixa[data] || 0;
     document.getElementById('total-dia').textContent = `R$ ${total.toFixed(2)}`;
 }
 
 function renderizarHistorico(caixa) {
     const ul = document.getElementById('historico-mensal');
     ul.innerHTML = '';
+    let totalGeral = 0;
     Object.keys(caixa).sort().forEach(data => {
         const li = document.createElement('li');
         li.textContent = `${data}: R$ ${caixa[data].toFixed(2)}`;
         ul.appendChild(li);
+        totalGeral += caixa[data];
     });
+   
+    const liTotal = document.createElement('li');
+    liTotal.className = 'total-geral';
+    liTotal.textContent = `Total Geral: R$ ${totalGeral.toFixed(2)}`;
+    ul.appendChild(liTotal);
 }
 
 function limparTudo() {

@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #ffffff; 
-    color: #4b0082;
+    color: #4b0082; 
     margin: 0;
     padding: 20px;
 }
@@ -20,7 +20,7 @@ h1 {
 section {
     margin-bottom: 30px;
     padding: 20px;
-    border: 1px solid #dda0dd;
+    border: 1px solid #4b0082;
     border-radius: 8px;
     background-color: #f9f9f9;
 }
@@ -41,7 +41,7 @@ th {
 input, select, button {
     padding: 8px;
     margin: 5px;
-    border: 1px solid #dda0dd;
+    border: 1px solid #4b0082;
     border-radius: 4px;
 }
 button {
@@ -68,6 +68,11 @@ button:hover {
     padding: 10px;
     margin: 5px 0;
     border-radius: 4px;
+}
+.historico .total-geral {
+    background-color: #4b0082;
+    color: white;
+    font-weight: bold;
 }
 #lista-servicos {
     list-style: none;
