@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento e Caixa - Salão</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="img/logo.jpg" alt="Logo" class="logo"> 
+        <h1>Sistema de Agendamento e Controle de Caixa</h1>
+    </header>
+
+    <section id="servicos">
+        <h2>Gerenciar Serviços</h2>
+        <p>Adicione, edite ou remova tipos de serviços.</p>
+        <input type="text" id="novo-servico" placeholder="Novo Serviço (ex: Corte de Cabelo)">
+        <button onclick="adicionarServico()">Adicionar Serviço</button>
+        <ul id="lista-servicos">
+        </ul>
+    </section>
+
+    <section id="agendamento">
+        <h2>Agendamentos do Dia</h2>
+        <p>Selecione um horário disponível e adicione cliente/serviço. Até 2 clientes por horário, e cada cliente pode ter múltiplos serviços.</p>
+        <table id="tabela-agendamentos">
+            <thead>
+                <tr>
+                    <th>Horário</th>
+                    <th>Cliente 1 e Serviços</th>
+                    <th>Total 1</th>
+                    <th>Cliente 2 e Serviços</th>
+                    <th>Total 2</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <br>
+        
+        <select id="hora">
+            <option value="">Selecione Horário</option>
+        </select>
+        
+        <input type="text" id="cliente" placeholder="Nome do Cliente">
+        <select id="servico-agendamento">
+            <option value="">Selecione Serviço</option>
+        </select>
+        <input type="number" id="valor" placeholder="Valor (ex: 50.00)" step="0.01">
+        <button onclick="adicionarAgendamento()">Adicionar Agendamento</button>
+    </section>
+
+    <section id="caixa">
+        <h2>Controle de Caixa</h2>
+        <p>Adicione ganhos diários. Total do dia: <span id="total-dia" class="total">R$ 0,00</span></p>
+        <input type="number" id="ganho" placeholder="Valor (ex: 50.00)" step="0.01">
+        <button onclick="adicionarGanho()">Adicionar Ganho</button>
+        <div class="historico">
+            <h3>Histórico Mensal</h3>
+            <ul id="historico-mensal">
+        </ul>
+        </div>
+    </section>
+
+    <section>
+        <button onclick="limparTudo()">Limpar Tudo (Resetar Dados)</button>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

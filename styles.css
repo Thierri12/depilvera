@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff; 
+    color: #4b0082;
+    margin: 0;
+    padding: 20px;
+}
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.logo {
+    max-width: 100px; 
+    height: auto; 
+    border-radius: 50%;
+}
+h1 {
+    color: #4b0082;
+}
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #dda0dd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px; 
+}
+th, td {
+    border: 1px solid #dda0dd;
+    padding: 4px;
+    text-align: center;
+}
+th {
+    background-color: #4b0082;
+    color: white;
+}
+input, select, button {
+    padding: 8px;
+    margin: 5px;
+    border: 1px solid #dda0dd;
+    border-radius: 4px;
+}
+button {
+    background-color: #4b0082;
+    color: white;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #6a0dad;
+}
+.total {
+    font-weight: bold;
+    color: #4b0082;
+}
+.historico {
+    margin-top: 20px;
+}
+.historico ul {
+    list-style: none;
+    padding: 0;
+}
+.historico li {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+#lista-servicos {
+    list-style: none;
+    padding: 0;
+}
+#lista-servicos li {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+}
