@@ -13,14 +13,7 @@
         <h1>Sistema de Agendamento e Controle de Caixa</h1>
     </header>
 
-    <section id="servicos">
-        <h2>Gerenciar Serviços</h2>
-        <p>Adicione, edite ou remova tipos de serviços.</p>
-        <input type="text" id="novo-servico" placeholder="Novo Serviço (ex: Corte de Cabelo)">
-        <button onclick="adicionarServico()">Adicionar Serviço</button>
-        <ul id="lista-servicos">
-        </ul>
-    </section>
+
 
     <section id="agendamento">
         <h2>Agendamentos</h2>
@@ -31,10 +24,14 @@
             <thead>
                 <tr>
                     <th>Horário</th>
-                    <th>Cliente 1 e Serviços</th>
+                    <th>Cliente 1</th>
+                    <th>Serviços 1</th>
                     <th>Total 1</th>
-                    <th>Cliente 2 e Serviços</th>
+                    <th>Pagamento 1</th>
+                    <th>Cliente 2</th>
+                    <th>Serviços 2</th>
                     <th>Total 2</th>
+                    <th>Pagamento 2</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -49,15 +46,25 @@
         <select id="servico-agendamento">
             <option value="">Selecione Serviço</option>
         </select>
-        <input type="number" id="valor" placeholder="Valor (ex: 50.00)" step="0.01">
+        <select id="meio-pagamento">
+            <option value="">Pagamento</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Cartão de Débito">Cartão de Débito</option>
+            <option value="Cartão de Crédito">Cartão de Crédito</option>
+            <option value="PIX">PIX</option>
+        </select>
         <button onclick="adicionarAgendamento()">Adicionar Agendamento</button>
     </section>
 
     <section id="caixa">
         <h2>Controle de Caixa</h2>
-        <p>Selecione uma data e adicione ganhos do dia. Total do dia selecionado: <span id="total-dia" class="total">R$ 0,00</span></p>
-        <label for="data-caixa">Data:</label>
-        <input type="date" id="data-caixa" onchange="atualizarTotalDiaPorData()">
+        <p>Selecione um mês para visualizar o controle de caixa. Total do mês selecionado: <span id="total-mes" class="total">R$ 0,00</span></p>
+        <label for="data-caixa">Mês:</label>
+        <input type="month" id="data-caixa" onchange="atualizarTotalMensalPorMes()">
+        <br>
+        <p>Adicionar ganho do dia:</p>
+        <label for="data-add">Data:</label>
+        <input type="date" id="data-add">
         <input type="number" id="ganho" placeholder="Valor (ex: 50.00)" step="0.01">
         <button onclick="adicionarGanho()">Adicionar Ganho</button>
         <div class="historico">
@@ -67,10 +74,33 @@
         </div>
     </section>
 
-    <section>
-        <button onclick="limparTudo()">Limpar Tudo (Resetar Dados)</button>
-    </section>
-    <p> &copy; 2025 Vera Depil. Todos os direitos reservados. </p>
+    <button id="toggle-servicos" onclick="toggleServicos()">Gerenciar Serviços</button>
+    <div id="gerenciar-servicos" style="display: none;">
+        <h3>Adicionar Novo Serviço</h3>
+        <label for="categoria-servico">Categoria:</label>
+        <select id="categoria-servico">
+            <option value="geral">Geral</option>
+            <option value="pacotes">Pacotes</option>
+            <option value="feminina">Depilação Feminina</option>
+            <option value="masculina">Depilação Masculina</option>
+        </select>
+        <input type="text" id="novo-servico" placeholder="Nome do Serviço (ex: Virilha)">
+        <input type="number" id="preco-servico" placeholder="Preço (R$)" step="0.01">
+        <button onclick="adicionarServico()">Adicionar Serviço</button>
+        <button onclick="toggleListaServicos()">Ver Serviços Existentes</button>
+        <ul id="lista-servicos-gerenciar" style="display: none;">
+        </ul>
+    </div>
+
+    <p style="text-align: center;"> &copy; 2025 Vera Depil. Todos os direitos reservados. </p>
+
+    <div id="modal-overlay"></div>
+    <div id="modal">
+        <div id="modal-content">
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
